@@ -1,0 +1,11 @@
+# Routes
+GET     /                                               controllers.HomeController.index
+
+GET     /stock/:product                                 controllers.StockController.getStock(product)
+
+POST    /stock/:product/:quantity                       controllers.StockController.createStock(product, quantity)
+
+PUT     /stock/:product/increment/:quantity              controllers.StockController.increaseStock(product, quantity)
+
+PUT     /stock/:product/decrement/:quantity              controllers.StockController.decreaseStock(product, quantity)
+
