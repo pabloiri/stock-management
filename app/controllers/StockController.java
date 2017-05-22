@@ -23,36 +23,63 @@ public class StockController extends Controller {
     }
 
     public Result getStock(String productId) {
-        int productStock = stockService.getStock(productId);
-        JsonNode response = createStockResponse(productId, productStock);
-        return ok(response);
+        try{
+            int productStock = stockService.getStock(productId);
+            JsonNode response = createStockResponse(productId, productStock);
+            return ok(response);
+        } catch(StockException ex) {
+            return status(409, ex.getMessage());
+        }
     }
 
     public Result createStock(String productId, String quantityString) {
-        int quantity = parseQuantity(quantityString);
-        int productStock = stockService.createStock(productId, quantity);
-        JsonNode response = createStockResponse(productId, productStock);
-        return ok(response);
+        try{
+            int quantity = parseQuantity(quantityString);
+            int productStock = stockService.createStock(productId, quantity);
+            JsonNode response = createStockResponse(productId, productStock);
+            return ok(response);
+        } catch(ParameterException ex) {
+            return badRequest(ex.getMessage());
+        } catch(StockException ex) {
+            return status(409, ex.getMessage());
+        }
     }
 
     public Result increaseStock(String productId, String quantityString) {
-        int quantity = parseQuantity(quantityString);
-        int productStock = stockService.increaseStock(productId, quantity);
-        JsonNode response = createStockResponse(productId, productStock);
-        return ok(response);
+        try{
+            int quantity = parseQuantity(quantityString);
+            int productStock = stockService.increaseStock(productId, quantity);
+            JsonNode response = createStockResponse(productId, productStock);
+            return ok(response);
+        } catch(ParameterException ex) {
+            return badRequest(ex.getMessage());
+        } catch(StockException ex) {
+            return status(409, ex.getMessage());
+        }
     }
 
     public Result decreaseStock(String productId, String quantityString) {
-        int quantity = parseQuantity(quantityString);
-        int productStock = stockService.decreaseStock(productId, quantity);
-        JsonNode response = createStockResponse(productId, productStock);
-        return ok(response);
+        try{
+            int quantity = parseQuantity(quantityString);
+            int productStock = stockService.decreaseStock(productId, quantity);
+            JsonNode response = createStockResponse(productId, productStock);
+            return ok(response);
+        } catch(ParameterException ex) {
+            return badRequest(ex.getMessage());
+        } catch(StockException ex) {
+            return status(409, ex.getMessage());
+        }
     }
 
     private int parseQuantity(String quantityString) {
-        int quantity = Integer.parseInt(quantityString);
+        int quantity;
+        try {
+            quantity = Integer.parseInt(quantityString);
+        } catch(NumberFormatException ex) {
+            throw new ParameterException("Invalid quantity");
+        }
         if(quantity <= 0) {
-            throw new StockException("Invalid quantity");
+            throw new ParameterException("Invalid quantity");
         }
         return quantity;
     }
